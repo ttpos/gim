@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
 
-export const route = new Hono()
+export const roomKeysVersionRoute = new Hono()
 
-route.get('/', async (c) => {
+roomKeysVersionRoute.get('/', async (c) => {
   try {
     const data = {
       auth_data: {

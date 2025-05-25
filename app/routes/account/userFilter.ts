@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
 
-export const route = new Hono()
+export const userFilterRoute = new Hono()
 
-route.post('/', async (c) => {
+userFilterRoute.post('/', async (c) => {
   try {
     const data = { filter_id: '0' }
     return c.json(data)

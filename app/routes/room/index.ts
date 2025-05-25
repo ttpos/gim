@@ -1,3 +1,3 @@
-import { route as sync } from './sync'
+import {  syncRoute } from './sync'
 
-export const room = { sync }
+export const room = { syncRoute }

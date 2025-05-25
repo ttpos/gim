@@ -77,9 +77,9 @@ const data = {
   },
 }
 
-export const route = new Hono()
+export const keysQueryRoute = new Hono()
 
-route.post('/', async (c) => {
+keysQueryRoute.post('/', async (c) => {
   try {
     return c.json(data)
   }

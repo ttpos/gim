@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
 
-export const route = new Hono()
+export const pushRulesRoute = new Hono()
 
-route.get('/', async (c) => {
+pushRulesRoute.get('/', async (c) => {
   try {
     const data = {
       global: {

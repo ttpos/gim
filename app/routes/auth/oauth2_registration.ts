@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
 
-export const route = new Hono()
+export const oauth2RegistrationRoute = new Hono()
 
-route.post('/', async (c) => {
+oauth2RegistrationRoute.post('/', async (c) => {
   try {
     const data = {
       client_id: 'bldldkkwmd526e0ila59x',
@@ -18,8 +18,7 @@ route.post('/', async (c) => {
     }
 
     return c.json(data)
-  }
-  catch (error) {
+  } catch (error) {
     logger.error(error)
     c.json({
       ok: false,

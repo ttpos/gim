@@ -9,6 +9,7 @@ export default antfu(
   {
     rules: {
       'node/prefer-global/process': 0,
+      'eslint-comments/no-unlimited-disable': 0,
     },
     ignores: ['third/**'],
   },

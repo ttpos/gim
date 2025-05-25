@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
 
-export const route = new Hono()
+export const metadataRoute = new Hono()
 
-route.get('/', async (c) => {
+metadataRoute.get('/', async (c) => {
   try {
     const response = await fetch('https://login.gid.io/oidc/.well-known/openid-configuration')
     if (!response.ok) {

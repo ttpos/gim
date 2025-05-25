@@ -1,62 +1,86 @@
 import { Hono } from 'hono'
 import { serveStatic } from 'hono/bun'
-import { logger as accesslog } from 'hono/logger'
-import { prettyJSON } from 'hono/pretty-json'
 import { listenHost, listenPort } from './config'
-import { logger } from './logger'
-import { account, auth, e2ee, room, server } from './routes'
+import { account, auth, e2ee, room, server, testRoute, appRoute, emptyRoute } from './routes'
+import '@/global'
+import { logger as accesslog } from 'hono/logger'
 
-function customLogger(message: string, ...rest: string[]) {
-  const url = message.split(' ')[2]
-  if (url && url.startsWith('/_matrix')) {
-    logger.info(message, rest)
+storage.set('server', {
+  startTime: new Date(),
+})
+
+export const customLogger = (message: string, ...rest: string[]) => {
+  if (message.includes('matrix')) {
+    logger.info(message, ...rest)
   }
 }
 
 async function run() {
   const app = new Hono()
+
   app.use(accesslog(customLogger))
-  app.use(prettyJSON())
 
-  app.route('/api', server.api)
+  /* test */
+  app.route('/test', testRoute)
 
-  app.route('/.well-known/matrix/client', server.wellKnow.client)
-  app.route('/.well-known/matrix/server', server.wellKnow.server)
-  app.route('/_matrix/client/versions', server.versions)
-  app.route('/_matrix/client/v3/capabilities', server.capabilities)
+  /* server */
+  app.route('/', server.homeRoute)
+  app.route('/api', server.apiRoute)
 
-  app.route('/_matrix/client/v1/auth_metadata', auth.metadata)
-  app.route('/_matrix/client/unstable/org.matrix.msc2965/auth_metadata', auth.metadata)
-  app.route('/_matrix/gim/oauth2/registration', auth.oauth2Registration)
+  // matrix server info
+  app.route('/.well-known/matrix/client', server.wellKnowClientRoute)
+  app.route('/.well-known/matrix/server', server.wellKnowServerRoute)
+  app.route('/_matrix/client/versions', server.versionsRoute)
+  app.route('/_matrix/client/v3/capabilities', server.capabilitiesRoute)
 
-  app.route('/_matrix/client/v3/account/whoami', account.whoami)
+  /* oauth */
+  app.route('/_matrix/client/v1/auth_metadata', auth.metadataRoute)
+  app.route('/_matrix/client/unstable/org.matrix.msc2965/auth_metadata', auth.metadataRoute)
+  app.route('/_matrix/gim/oauth2/registration', auth.oauth2RegistrationRoute)
 
-  // sync
-  app.route('/_matrix/client/v3/user/:id/filter', account.userFilter)
-  app.route('/_matrix/client/v3/sync', room.sync)
+  /* account */
+  app.route('/_matrix/client/v3/login', emptyRoute) // TODO: Implement login
+  app.route('/_matrix/client/v3/logout', emptyRoute) // TODO: Implement logout
+  app.route('/_matrix/client/v3/refresh', emptyRoute) // TODO: Implement register
 
-  // e2ee
-  app.route('/_matrix/client/v3/room_keys/version', e2ee.roomKeysVersion)
-  app.route('/_matrix/client/v3/keys/query', e2ee.keysQuery)
-  app.route('/_matrix/client/v3/keys/upload', e2ee.keysUpload)
+  app.route('/_matrix/client/v3/account/whoami', account.whoamiRoute)
+
+  // account info
+  app.route('/_matrix/client/v3/user/:id/account_data', emptyRoute)
+  app.route('/_matrix/client/v3/user/:id/filter', account.userFilterRoute)
+  app.route('/_matrix/client/v3/user/:id/filter/*', emptyRoute)
+  app.route('/_matrix/client/v3/profile/:id', emptyRoute)
+
+  // push rules
+  app.route('/_matrix/client/v3/pushrules/', account.pushRulesRoute)
+
+  /* room */
+  app.route('/_matrix/client/v3/sync', room.syncRoute)
+
+  /* e2ee */
+  app.route('/_matrix/client/v3/room_keys/version', e2ee.roomKeysVersionRoute)
+  app.route('/_matrix/client/v3/keys/query', e2ee.keysQueryRoute)
+  app.route('/_matrix/client/v3/keys/upload', e2ee.keysUploadRoute)
 
   // push
-  app.route('/_matrix/client/v3/pushrules/', account.pushRules)
 
   // empty route
-  app.route('/_matrix/client/v3/thirdparty/protocols', server.empty)
-  app.route('/_matrix/client/v3/voip/turnServer', server.empty)
-  app.route('/_matrix/client/v3/user/:id/account_data', server.empty)
-  app.route('/_matrix/client/v3/user/:id/filter/*', server.empty)
-  app.route('/_matrix/client/v3/profile/:id', server.empty)
-  // Static files for static resources
+  app.route('/_matrix/client/v3/thirdparty/protocols', emptyRoute)
+  app.route('/_matrix/client/v3/voip/turnServer', emptyRoute)
+
+  // Static files
   app.get('/public/*', serveStatic({ root: './' }))
 
-  // Static files for web client
-  app.get('/*', serveStatic({ root: './third/element/web' }))
-  app.get('/icons/*', serveStatic({ root: './third/element/web' }))
-  app.get('/img/*', serveStatic({ root: './third/element/web' }))
-  app.get('/bundles/*', serveStatic({ root: './third/element/web' }))
+  // web client
+  app.get('/app', serveStatic({ path: './third/element/app.html' }))
+  app.route('/version', appRoute)
+  app.route('/config*', appRoute)
+  app.route('/i18n/*', appRoute)
+  app.route('/app/*', appRoute)
+  app.route('/themes/*', appRoute)
+  app.route('/icons/*', appRoute)
+  app.route('/sw.js', appRoute)
+  app.route('/welcome*', appRoute)
 
   const http = Bun.serve({
     fetch: app.fetch,

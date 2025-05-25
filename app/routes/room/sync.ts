@@ -1,4 +1,3 @@
-import { sleep } from 'bun'
 import { Hono } from 'hono'
 
 const data = {
@@ -20,9 +19,9 @@ const data = {
   device_unused_fallback_key_types: [],
 }
 
-export const route = new Hono()
+export const syncRoute = new Hono()
 let id = 0
-route.get('/', async (c) => {
+syncRoute.get('/', async (c) => {
   try {
     if (id === 0) {
       id++

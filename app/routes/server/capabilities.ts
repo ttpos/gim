@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
 
-export const route = new Hono()
+export const capabilitiesRoute = new Hono()
 
-route.get('/', async (c) => {
+capabilitiesRoute.get('/', async (c) => {
   try {
     const data = {
       capabilities: {
@@ -19,19 +19,7 @@ route.get('/', async (c) => {
             '8': 'stable',
             '9': 'stable',
             '10': 'stable',
-            '11': 'stable',
-            'org.matrix.msc3757.10': 'unstable',
-            'org.matrix.msc3757.11': 'unstable',
-          },
-          'org.matrix.msc3244.room_capabilities': {
-            knock: {
-              preferred: '11',
-              support: ['10', '11', 'org.matrix.msc3757.10', 'org.matrix.msc3757.11'],
-            },
-            restricted: {
-              preferred: '11',
-              support: ['10', '11', 'org.matrix.msc3757.10', 'org.matrix.msc3757.11'],
-            },
+            '11': 'stable'
           },
         },
         'm.change_password': {

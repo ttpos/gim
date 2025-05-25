@@ -1,5 +1,9 @@
-import { route as pushRules } from './pushRules'
-import { route as userFilter } from './userFilter'
-import { route as whoami } from './whoami'
+import { pushRulesRoute } from './pushRules'
+import { userFilterRoute } from './userFilter'
+import { whoamiRoute } from './whoami'
 
-export const account = { whoami, pushRules, userFilter }
+export const account = {
+  pushRulesRoute,
+  userFilterRoute,
+  whoamiRoute,
+}

@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
 
-export const route = new Hono()
+export const wellKnowClientRoute = new Hono()
 
-route.get('/', async (c) => {
+wellKnowClientRoute.get('/', async (c) => {
   try {
     const data = {
       'm.homeserver': {

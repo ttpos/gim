@@ -1,5 +1,5 @@
-import { route as keysQuery } from './keysQuery'
-import { route as keysUpload } from './keysUpload'
-import { route as roomKeysVersion } from './roomKeysVersion'
+import { keysQueryRoute } from './keysQuery'
+import {  keysUploadRoute } from './keysUpload'
+import { roomKeysVersionRoute } from './roomKeysVersion'
 
-export const e2ee = { roomKeysVersion, keysQuery, keysUpload }
+export const e2ee = { keysQueryRoute, keysUploadRoute, roomKeysVersionRoute }
