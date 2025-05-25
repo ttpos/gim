@@ -10,7 +10,7 @@
     "start": "bun run build && bun dist/index.js",
     "compile": "bun build app/index.ts --compile --outfile dist/${npm_package_name}",
     "lint:fix": "eslint --fix",
-    "s3": "bun run tools/s3-upload-element.ts"
+    "s3": "bun run tools/s3-upload.ts"
   },
   "peerDependencies": {
     "typescript": "^5"

@@ -17,7 +17,7 @@ if (!accountid || !bucketName || !accessKeyId || !secretAccessKey) {
   process.exit(1)
 }
 
-async function uploadDirectoryToR2(localPath: string, keyPrefix: string = '') {
+async function s3uload(localPath: string, keyPrefix: string = '') {
   let S3: S3Client
   try {
     S3 = new S3Client({
@@ -111,7 +111,7 @@ console.log(`Endpoint: https://${accountid}.r2.cloudflarestorage.com`)
 
 // 使用示例
 try {
-  await uploadDirectoryToR2(finalLocalPath, keyPrefix)
+  await s3uload(finalLocalPath, keyPrefix)
   console.log('Upload completed')
 } catch (error) {
   const errorMessage = error instanceof Error ? error.message : String(error)
