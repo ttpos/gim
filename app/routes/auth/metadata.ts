@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import { serverName } from '@/config'
 
 export const metadataRoute = new Hono()
 
@@ -10,13 +11,12 @@ metadataRoute.get('/', async (c) => {
     }
 
     // return response
-    const data = await response.json() as Record<string, unknown>
+    const data = (await response.json()) as Record<string, unknown>
 
-    data.registration_endpoint = 'https://sd.sgdev.ds.cc/_matrix/gim/oauth2/registration'
+    data.registration_endpoint = 'https://' + serverName + '/_matrix/gim/oauth2/registration'
 
     return c.json(data)
-  }
-  catch (error) {
+  } catch (error) {
     logger.error(error)
     c.json({
       ok: false,

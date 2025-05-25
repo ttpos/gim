@@ -1,16 +1,16 @@
 import { Hono } from 'hono'
-
+import { serverName } from '@/config'
 export const wellKnowClientRoute = new Hono()
 
 wellKnowClientRoute.get('/', async (c) => {
   try {
     const data = {
       'm.homeserver': {
-        base_url: 'https://sd.sgdev.ds.cc',
+        base_url: 'https://' + serverName,
       },
       'org.matrix.msc2965.authentication': {
-        issuer: 'ttps://sd.sgdev.ds.cc',
-        account: 'ttps://sd.sgdev.ds.cc/account/',
+        issuer: 'https://' + serverName,
+        account: 'https://' + serverName + '/account/',
       },
       'org.matrix.msc4143.rtc_foci': [
         {
@@ -20,8 +20,7 @@ wellKnowClientRoute.get('/', async (c) => {
       ],
     }
     return c.json(data)
-  }
-  catch (error) {
+  } catch (error) {
     logger.error(error)
     c.json({
       ok: false,
